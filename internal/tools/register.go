@@ -22,5 +22,15 @@ func Register(s *mcp.Server, d Deps) int {
 		d.Log = slog.New(slog.DiscardHandler)
 	}
 	registerStatus(s, d)
-	return 1
+	n := 1
+	for _, r := range Resources {
+		if !d.Config.Enabled(r.Group) {
+			continue
+		}
+		if err := registerResource(s, d, r); err != nil {
+			panic(r.Name + ": " + err.Error()) // static table; only a programming error lands here
+		}
+		n++
+	}
+	return n
 }

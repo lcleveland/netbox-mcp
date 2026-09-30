@@ -4,6 +4,7 @@ package server
 import (
 	"context"
 	"log/slog"
+	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
@@ -21,8 +22,27 @@ func New(cfg *config.Config, c *netbox.Client, log *slog.Logger) (*mcp.Server, i
 }
 
 func instructions(cfg *config.Config) string {
-	return "Tools for the NetBox instance at " + cfg.URL.String() + " (IPAM/DCIM source of truth), over the REST API.\n\n" +
-		"Call netbox_status first if anything fails: it separates a wrong URL from a rejected token from a missing permission."
+	s := "Tools for the NetBox instance at " + cfg.URL.String() + ", the IPAM/DCIM source of truth, over the REST API.\n\n" +
+		"Call netbox_status first if anything fails: it separates a wrong URL from a rejected token from a missing permission.\n\n"
+	var on, off []string
+	for _, v := range []struct {
+		name string
+		ok   bool
+	}{{"create", cfg.AllowCreate}, {"update", cfg.AllowUpdate}, {"delete", cfg.AllowDelete}} {
+		if v.ok {
+			on = append(on, v.name)
+		} else {
+			off = append(off, v.name)
+		}
+	}
+	if len(on) == 0 {
+		return s + "This server is read-only: writes are disabled by the operator. Do not suggest workarounds; ask the user to change the server configuration if a write is needed."
+	}
+	s += "Enabled writes: " + strings.Join(on, ", ") + ". Every write needs a reason, which NetBox records in its changelog. NetBox has no undo: confirm with the user before bulk changes or deletes."
+	if len(off) > 0 {
+		s += " Disabled by the operator: " + strings.Join(off, ", ") + "."
+	}
+	return s
 }
 
 // ServeStdio runs until ctx is cancelled. Nothing else may write to stdout.

@@ -3,6 +3,7 @@ package tools
 import (
 	"context"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -15,8 +16,18 @@ import (
 )
 
 // session starts a fake NetBox and an in-memory MCP client/server pair.
+type sessionT = *mcp.ClientSession
+
 func session(t *testing.T, cfg *config.Config, h http.HandlerFunc) *mcp.ClientSession {
 	t.Helper()
+	return sessionLog(t, cfg, nil, h)
+}
+
+func sessionLog(t *testing.T, cfg *config.Config, log *slog.Logger, h http.HandlerFunc) *mcp.ClientSession {
+	t.Helper()
+	if h == nil {
+		h = func(http.ResponseWriter, *http.Request) {}
+	}
 	srv := httptest.NewServer(h)
 	t.Cleanup(srv.Close)
 	u, _ := url.Parse(srv.URL)
@@ -31,7 +42,7 @@ func session(t *testing.T, cfg *config.Config, h http.HandlerFunc) *mcp.ClientSe
 	c.Attempts = 1
 
 	s := mcp.NewServer(&mcp.Implementation{Name: "test"}, nil)
-	Register(s, Deps{Client: c, Config: cfg})
+	Register(s, Deps{Client: c, Config: cfg, Log: log})
 	st, ct := mcp.NewInMemoryTransports()
 	ctx := context.Background()
 	if _, err := s.Connect(ctx, st, nil); err != nil {
