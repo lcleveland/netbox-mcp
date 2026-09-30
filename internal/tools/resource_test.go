@@ -15,6 +15,10 @@ import (
 )
 
 func enumOf(t *testing.T, cs sessionT, tool string) []string {
+	return schemaEnum(t, cs, tool, "action")
+}
+
+func schemaEnum(t *testing.T, cs sessionT, tool, prop string) []string {
 	t.Helper()
 	tl := toolNames(t, cs)[tool]
 	if tl == nil {
@@ -27,7 +31,7 @@ func enumOf(t *testing.T, cs sessionT, tool string) []string {
 		} `json:"properties"`
 	}
 	json.Unmarshal(b, &s)
-	return s.Properties["action"].Enum
+	return s.Properties[prop].Enum
 }
 
 func TestListBriefFieldsAndStrip(t *testing.T) {
@@ -94,7 +98,7 @@ func TestVerbGating(t *testing.T) {
 
 	cs := session(t, nil, h)
 	tools := toolNames(t, cs)
-	if len(tools) != 1+len(Resources) {
+	if len(tools) != 3+len(Resources) {
 		t.Errorf("tool count %d", len(tools))
 	}
 	if e := enumOf(t, cs, "netbox_prefix"); !slices.Equal(e, []string{"list", "get"}) {
@@ -128,7 +132,7 @@ func TestVerbGating(t *testing.T) {
 func TestToolGroups(t *testing.T) {
 	cs := session(t, &config.Config{Groups: []string{"tenancy"}}, nil)
 	tools := toolNames(t, cs)
-	if len(tools) != 2 || tools["netbox_status"] == nil || tools["netbox_tenant"] == nil {
+	if len(tools) != 3 || tools["netbox_status"] == nil || tools["netbox_api"] == nil || tools["netbox_tenant"] == nil {
 		t.Fatalf("tools %v", tools)
 	}
 }

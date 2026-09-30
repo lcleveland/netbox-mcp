@@ -22,15 +22,26 @@ func Register(s *mcp.Server, d Deps) int {
 		d.Log = slog.New(slog.DiscardHandler)
 	}
 	registerStatus(s, d)
-	n := 1
+	must("netbox_api", registerGeneric(s, d))
+	n := 2
+	if d.Config.Enabled("ipam") {
+		must("netbox_available", registerAvailable(s, d))
+		n++
+	}
 	for _, r := range Resources {
 		if !d.Config.Enabled(r.Group) {
 			continue
 		}
-		if err := registerResource(s, d, r); err != nil {
-			panic(r.Name + ": " + err.Error()) // static table; only a programming error lands here
-		}
+		must(r.Name, registerResource(s, d, r))
 		n++
 	}
 	return n
+}
+
+// must panics on a schema error: the tool set is static, so only a
+// programming error lands here, and it fails every test.
+func must(name string, err error) {
+	if err != nil {
+		panic(name + ": " + err.Error())
+	}
 }
