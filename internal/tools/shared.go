@@ -99,7 +99,9 @@ func strip(v any) any {
 		delete(t, "url")
 		delete(t, "display_url")
 		for k, x := range t {
-			t[k] = strip(x)
+			if k != "custom_fields" { // user-named keys; a custom field may be called url
+				t[k] = strip(x)
+			}
 		}
 	case []any:
 		for i, x := range t {

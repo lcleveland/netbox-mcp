@@ -38,7 +38,7 @@ func TestListBriefFieldsAndStrip(t *testing.T) {
 	var got []string
 	cs := session(t, nil, func(w http.ResponseWriter, r *http.Request) {
 		got = append(got, r.URL.RawQuery)
-		fmt.Fprint(w, `{"count":120,"next":"http://x/?offset=50","results":[{"id":1,"url":"http://x/1/","display_url":"u","site":{"id":2,"url":"http://x/2/","name":"hq"}}]}`)
+		fmt.Fprint(w, `{"count":120,"next":"http://x/?offset=50","results":[{"id":1,"url":"http://x/1/","display_url":"u","site":{"id":2,"url":"http://x/2/","name":"hq"},"custom_fields":{"url":"keep"}}]}`)
 	})
 	out, isErr, text := call(t, cs, "netbox_prefix", map[string]any{"action": "list", "query": map[string]any{"site": "hq", "tag": []any{"a", "b"}}})
 	if isErr {
@@ -51,7 +51,7 @@ func TestListBriefFieldsAndStrip(t *testing.T) {
 		t.Errorf("paging: %v", out)
 	}
 	res := out["results"].([]any)[0].(map[string]any)
-	if res["url"] != nil || res["display_url"] != nil || res["site"].(map[string]any)["url"] != nil {
+	if res["url"] != nil || res["display_url"] != nil || res["site"].(map[string]any)["url"] != nil || res["custom_fields"].(map[string]any)["url"] != "keep" {
 		t.Errorf("url not stripped: %v", res)
 	}
 

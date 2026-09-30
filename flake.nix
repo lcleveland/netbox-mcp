@@ -43,6 +43,14 @@
           inherit self lib;
           pkgs = pkgsFor system;
         }
+        // {
+          # ~7 minutes (NetBox migrations); build alone with
+          # nix build .#checks.<system>.vm-netbox
+          vm-netbox = import ./tests/vm-netbox.nix {
+            inherit self;
+            pkgs = pkgsFor system;
+          };
+        }
       );
 
       formatter = forAllSystems (system: (pkgsFor system).nixfmt-tree);
