@@ -45,5 +45,8 @@ func run(args []string) error {
 	c := netbox.New(cfg.URL, cfg.Token, &http.Client{Timeout: cfg.RequestTimeout})
 	s, n := server.New(cfg, c, log)
 	log.Info("registered tools", "count", n)
+	if cfg.HTTP {
+		return server.ServeHTTP(ctx, cfg, s, log)
+	}
 	return server.ServeStdio(ctx, s)
 }
