@@ -14,15 +14,36 @@
       pkgsFor = system: nixpkgs.legacyPackages.${system};
     in
     {
+      overlays.default = import ./overlay.nix;
+
+      nixosModules = {
+        netbox-mcp =
+          { pkgs, ... }:
+          {
+            imports = [ ./modules/netbox-mcp.nix ];
+            services.netbox-mcp.package =
+              lib.mkDefault
+                self.packages.${pkgs.stdenv.hostPlatform.system}.netbox-mcp;
+          };
+        default = self.nixosModules.netbox-mcp;
+      };
+
       packages = forAllSystems (system: rec {
         netbox-mcp = (pkgsFor system).callPackage ./pkgs/netbox-mcp.nix { };
         default = netbox-mcp;
       });
 
-      checks = forAllSystems (system: {
-        # Runs the Go test suite in checkPhase.
-        package = self.packages.${system}.netbox-mcp;
-      });
+      checks = forAllSystems (
+        system:
+        {
+          # Runs the Go test suite in checkPhase.
+          package = self.packages.${system}.netbox-mcp;
+        }
+        // import ./tests/eval.nix {
+          inherit self lib;
+          pkgs = pkgsFor system;
+        }
+      );
 
       formatter = forAllSystems (system: (pkgsFor system).nixfmt-tree);
 
