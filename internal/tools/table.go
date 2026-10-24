@@ -34,6 +34,26 @@ var Resources = []Resource{
 	{Name: "netbox_cable", Group: "dcim", Path: "/api/dcim/cables/", Title: "Cables",
 		Description: "Cables between interfaces, ports and circuits. Filters: device, device_id, site_id, rack_id, type, status, label, color, tag. " +
 			"a_terminations/b_terminations are lists of {object_type, object_id}."},
+	{Name: "netbox_manufacturer", Group: "dcim", Path: "/api/dcim/manufacturers/", Title: "Manufacturers",
+		Description: "Hardware manufacturers (vendors). Filters: name, slug, q, tag."},
+	{Name: "netbox_device_type", Group: "dcim", Path: "/api/dcim/device-types/", Title: "Device types",
+		Description: "Device models (make and model). Filters: model, slug, part_number, q, manufacturer, manufacturer_id, u_height, subdevice_role, airflow, tag. " +
+			"Creating a device type needs manufacturer id, model and slug."},
+	{Name: "netbox_device_role", Group: "dcim", Path: "/api/dcim/device-roles/", Title: "Device roles",
+		Description: "Device roles (core switch, firewall, server...; nested). Filters: name, slug, q, color, vm_role, parent_id, tag."},
+	{Name: "netbox_platform", Group: "dcim", Path: "/api/dcim/platforms/", Title: "Platforms",
+		Description: "Platforms (operating systems such as IOS, Junos, Windows; nested). Filters: name, slug, q, manufacturer, manufacturer_id, parent_id, tag."},
+	{Name: "netbox_module", Group: "dcim", Path: "/api/dcim/modules/", Title: "Modules",
+		Description: "Modules installed in device module bays (line cards, PSUs, transceivers). Filters: q, device, device_id, site_id, module_type, module_type_id, module_bay_id, manufacturer, serial, asset_tag, status, tag. " +
+			"Creating a module needs device, module_bay and module_type ids."},
+	{Name: "netbox_inventory_item", Group: "dcim", Path: "/api/dcim/inventory-items/", Title: "Inventory items",
+		Description: "Inventory items inside devices (parts, licences, optics; nested). Filters: name, q, device, device_id, site_id, manufacturer, role, serial, asset_tag, part_id, status, discovered, parent_id, tag. " +
+			"Creating one needs device id and name."},
+	{Name: "netbox_mac_address", Group: "dcim", Path: "/api/dcim/mac-addresses/", Title: "MAC addresses",
+		Description: "MAC addresses, assigned to device or VM interfaces. Filters: mac_address, q, device, device_id, virtual_machine, virtual_machine_id, interface_id, vminterface_id, assigned, primary, tag. " +
+			"To find which interface has a MAC, list with mac_address and read assigned_object."},
+	{Name: "netbox_virtual_chassis", Group: "dcim", Path: "/api/dcim/virtual-chassis/", Title: "Virtual chassis",
+		Description: "Virtual chassis (switch stacks); member devices carry virtual_chassis and vc_position. Filters: name, domain, q, site_id, master_id, tenant, tag."},
 
 	// tenancy
 	{Name: "netbox_tenant", Group: "tenancy", Path: "/api/tenancy/tenants/", Title: "Tenants",

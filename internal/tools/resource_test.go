@@ -129,6 +129,25 @@ func TestVerbGating(t *testing.T) {
 	}
 }
 
+func TestResourceTable(t *testing.T) {
+	seen := map[string]bool{}
+	for _, r := range Resources {
+		if seen[r.Name] || !strings.HasPrefix(r.Name, "netbox_") {
+			t.Errorf("%s: duplicate or badly named", r.Name)
+		}
+		seen[r.Name] = true
+		if !slices.Contains(config.Groups, r.Group) || r.Group == "core" {
+			t.Errorf("%s: group %q is not a --tool-groups group", r.Name, r.Group)
+		}
+		if _, err := apiPath(r.Path); err != nil || !strings.HasSuffix(r.Path, "/") {
+			t.Errorf("%s: bad path %q", r.Name, r.Path)
+		}
+		if !strings.Contains(r.Description, "Filters: ") {
+			t.Errorf("%s: description lists no filters", r.Name)
+		}
+	}
+}
+
 func TestToolGroups(t *testing.T) {
 	cs := session(t, &config.Config{Groups: []string{"tenancy"}}, nil)
 	tools := toolNames(t, cs)
