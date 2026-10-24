@@ -21,6 +21,7 @@ let
     "tenancy"
     "virtualization"
     "extras"
+    "circuits"
   ];
   isLoopback = a: a == "::1" || a == "localhost" || lib.hasPrefix "127." a;
   inStore = p: p != null && lib.hasPrefix builtins.storeDir p;

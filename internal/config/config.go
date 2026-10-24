@@ -22,7 +22,7 @@ import (
 )
 
 // Groups are the tool groups --tool-groups may name. core is always on.
-var Groups = []string{"core", "ipam", "dcim", "tenancy", "virtualization", "extras"}
+var Groups = []string{"core", "ipam", "dcim", "tenancy", "virtualization", "extras", "circuits"}
 
 type Config struct {
 	URL            *url.URL

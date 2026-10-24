@@ -55,6 +55,20 @@ var Resources = []Resource{
 	{Name: "netbox_virtual_chassis", Group: "dcim", Path: "/api/dcim/virtual-chassis/", Title: "Virtual chassis",
 		Description: "Virtual chassis (switch stacks); member devices carry virtual_chassis and vc_position. Filters: name, domain, q, site_id, master_id, tenant, tag."},
 
+	// circuits
+	{Name: "netbox_provider", Group: "circuits", Path: "/api/circuits/providers/", Title: "Circuit providers",
+		Description: "Circuit providers (ISPs, carriers). Filters: name, slug, q, asn, site_id, tag."},
+	{Name: "netbox_provider_account", Group: "circuits", Path: "/api/circuits/provider-accounts/", Title: "Provider accounts",
+		Description: "Accounts held with a provider. Filters: name, account, q, provider, provider_id, tag. Creating one needs provider id and account."},
+	{Name: "netbox_circuit_type", Group: "circuits", Path: "/api/circuits/circuit-types/", Title: "Circuit types",
+		Description: "Circuit types (internet, MPLS, dark fibre...). Filters: name, slug, q, color, tag."},
+	{Name: "netbox_circuit", Group: "circuits", Path: "/api/circuits/circuits/", Title: "Circuits",
+		Description: "Provider circuits (WAN/internet links). Filters: cid, q, provider, provider_id, type, type_id, status, site_id, location_id, tenant, install_date, tag. " +
+			"Creating a circuit needs cid, provider and type ids. Where it lands is in its A/Z terminations (netbox_circuit_termination)."},
+	{Name: "netbox_circuit_termination", Group: "circuits", Path: "/api/circuits/circuit-terminations/", Title: "Circuit terminations",
+		Description: "The A and Z ends of circuits. Filters: circuit_id, term_side (A|Z), q, site_id, location_id, provider_id, provider_network_id, xconnect_id, cabled, tag. " +
+			"termination_type/termination_id point at a site, location, region, site group or provider network."},
+
 	// tenancy
 	{Name: "netbox_tenant", Group: "tenancy", Path: "/api/tenancy/tenants/", Title: "Tenants",
 		Description: "Tenants (customers or departments that own objects). Filters: name, slug, q, group, tag."},

@@ -76,7 +76,7 @@ in
     check "--http" cmd
     check "--addr 127.0.0.1:8231" cmd
     check "--url https://netbox.example" cmd
-    check "--tool-groups core,ipam,dcim,tenancy,virtualization,extras" cmd
+    check "--tool-groups core,ipam,dcim,tenancy,virtualization,extras,circuits" cmd
     check "api-token:/run/secrets/netbox-token" creds
     refute "/run/secrets/netbox-token" cmd
     refute "netbox-token" env
