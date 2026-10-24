@@ -98,7 +98,7 @@ func TestVerbGating(t *testing.T) {
 
 	cs := session(t, nil, h)
 	tools := toolNames(t, cs)
-	if len(tools) != 3+len(Resources) {
+	if len(tools) != 4+len(Resources) {
 		t.Errorf("tool count %d", len(tools))
 	}
 	if e := enumOf(t, cs, "netbox_prefix"); !slices.Equal(e, []string{"list", "get"}) {

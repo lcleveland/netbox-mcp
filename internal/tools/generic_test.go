@@ -88,4 +88,24 @@ func TestAvailable(t *testing.T) {
 	}
 }
 
+func TestTrace(t *testing.T) {
+	var got []string
+	cs := session(t, nil, func(w http.ResponseWriter, r *http.Request) {
+		got = append(got, r.Method+" "+r.URL.Path)
+		fmt.Fprint(w, `[[[{"id":1,"url":"x","name":"ge-0/0/1"}],{"id":5,"url":"x"},[{"id":9,"name":"eth0"}]]]`)
+	})
+	out, isErr, text := call(t, cs, "netbox_trace", map[string]any{"kind": "interface", "id": 1})
+	seg := out["results"].([]any)[0].([]any)
+	if isErr || got[0] != "GET /api/dcim/interfaces/1/trace/" || seg[1].(map[string]any)["url"] != nil {
+		t.Errorf("trace: %v %s %v", out, text, got)
+	}
+	call(t, cs, "netbox_trace", map[string]any{"kind": "rear_port", "id": 3})
+	if got[1] != "GET /api/dcim/rear-ports/3/paths/" {
+		t.Errorf("paths: %v", got)
+	}
+	if _, isErr, _ := call(t, cs, "netbox_trace", map[string]any{"kind": "interface", "id": 0}); !isErr || len(got) != 2 {
+		t.Error("id 0 should fail before calling NetBox")
+	}
+}
+
 func methodEnum(t *testing.T, cs sessionT) []string { return schemaEnum(t, cs, "netbox_api", "method") }

@@ -28,6 +28,10 @@ func Register(s *mcp.Server, d Deps) int {
 		must("netbox_available", registerAvailable(s, d))
 		n++
 	}
+	if d.Config.Enabled("dcim") {
+		must("netbox_trace", registerTrace(s, d))
+		n++
+	}
 	for _, r := range Resources {
 		if !d.Config.Enabled(r.Group) {
 			continue
