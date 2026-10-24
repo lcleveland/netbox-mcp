@@ -9,10 +9,10 @@ The server is read-only by default. Writes are enabled per verb, and every write
 | Group | Tools |
 |---|---|
 | core (always on) | `netbox_status` (connectivity/token/version probe), `netbox_api` (any `/api/` path, verb-gated) |
-| ipam | `netbox_prefix`, `netbox_ip_address`, `netbox_ip_range`, `netbox_vlan`, `netbox_vlan_group`, `netbox_vrf`, `netbox_available` (free/allocate IPs, prefixes, VLANs) |
+| ipam | `netbox_prefix`, `netbox_ip_address`, `netbox_ip_range`, `netbox_vlan`, `netbox_vlan_group`, `netbox_vrf`, `netbox_service`, `netbox_service_template`, `netbox_available` (free/allocate IPs, prefixes, VLANs) |
 | dcim | `netbox_site`, `netbox_location`, `netbox_rack`, `netbox_device`, `netbox_interface`, `netbox_cable`, `netbox_manufacturer`, `netbox_device_type`, `netbox_device_role`, `netbox_platform`, `netbox_module`, `netbox_inventory_item`, `netbox_mac_address`, `netbox_virtual_chassis`, `netbox_trace` (cable trace from an interface; paths through front/rear ports) |
 | circuits | `netbox_provider`, `netbox_provider_account`, `netbox_circuit_type`, `netbox_circuit`, `netbox_circuit_termination` |
-| tenancy | `netbox_tenant` |
+| tenancy | `netbox_tenant`, `netbox_contact`, `netbox_contact_assignment` |
 | virtualization | `netbox_virtual_machine`, `netbox_vm_interface` |
 | extras | `netbox_journal_entry`, `netbox_tag`, `netbox_object_change` (changelog, read-only), `netbox_custom_field` (definitions, read-only) |
 

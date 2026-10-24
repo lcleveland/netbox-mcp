@@ -18,6 +18,11 @@ var Resources = []Resource{
 		Description: "VLAN groups (VLAN ID pools scoped to a site, location, rack, etc.). Filters: name, slug, q, scope_type, scope_id, tag."},
 	{Name: "netbox_vrf", Group: "ipam", Path: "/api/ipam/vrfs/", Title: "VRFs",
 		Description: "VRFs (routing tables). Filters: name, rd, q, tenant, tag."},
+	{Name: "netbox_service", Group: "ipam", Path: "/api/ipam/services/", Title: "Services",
+		Description: "Application services (listening ports) on devices, VMs or FHRP groups. Filters: name, q, device, device_id, virtual_machine, virtual_machine_id, ip_address_id, parent_object_type, parent_object_id, protocol (tcp|udp|sctp), port, port_mappings (e.g. tcp/443), tag. " +
+			"Create needs parent_object_type (e.g. dcim.device), parent_object_id, name and port_mappings (e.g. [\"tcp/443\", \"udp/53\"]); protocol/ports are deprecated."},
+	{Name: "netbox_service_template", Group: "ipam", Path: "/api/ipam/service-templates/", Title: "Service templates",
+		Description: "Reusable service definitions (name plus port_mappings). Filters: name, q, protocol, port, port_mappings, tag."},
 
 	// dcim
 	{Name: "netbox_site", Group: "dcim", Path: "/api/dcim/sites/", Title: "Sites",
@@ -72,6 +77,12 @@ var Resources = []Resource{
 	// tenancy
 	{Name: "netbox_tenant", Group: "tenancy", Path: "/api/tenancy/tenants/", Title: "Tenants",
 		Description: "Tenants (customers or departments that own objects). Filters: name, slug, q, group, tag."},
+	{Name: "netbox_contact", Group: "tenancy", Path: "/api/tenancy/contacts/", Title: "Contacts",
+		Description: "People and teams to call about an object. Filters: name, q, title, email, phone, group, group_id, tag. " +
+			"Who is responsible for a given object is in netbox_contact_assignment."},
+	{Name: "netbox_contact_assignment", Group: "tenancy", Path: "/api/tenancy/contact-assignments/", Title: "Contact assignments",
+		Description: "Links a contact, in a role, to any object. Filters: object_type (e.g. dcim.site), object_id, contact_id, role, role_id, priority, q, tag. " +
+			"Create needs object_type, object_id, contact and role ids; list roles via netbox_api /api/tenancy/contact-roles/."},
 
 	// virtualization
 	{Name: "netbox_virtual_machine", Group: "virtualization", Path: "/api/virtualization/virtual-machines/", Title: "Virtual machines",

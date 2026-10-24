@@ -151,7 +151,7 @@ func TestResourceTable(t *testing.T) {
 func TestToolGroups(t *testing.T) {
 	cs := session(t, &config.Config{Groups: []string{"tenancy"}}, nil)
 	tools := toolNames(t, cs)
-	if len(tools) != 3 || tools["netbox_status"] == nil || tools["netbox_api"] == nil || tools["netbox_tenant"] == nil {
+	if len(tools) != 5 || tools["netbox_status"] == nil || tools["netbox_api"] == nil || tools["netbox_tenant"] == nil || tools["netbox_contact_assignment"] == nil {
 		t.Fatalf("tools %v", tools)
 	}
 }
