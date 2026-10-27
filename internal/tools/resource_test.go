@@ -216,6 +216,12 @@ func TestWrites(t *testing.T) {
 		t.Errorf("bulk delete req %+v", r)
 	}
 
+	// Bare tag names become {"name": ...}; ids pass through.
+	call(t, cs, "netbox_vlan", map[string]any{"action": "update", "id": 9, "reason": "tag", "body": map[string]any{"add_tags": []any{"meraki-autovpn", 1}}})
+	if got, _ := json.Marshal(reqs[4].body.(map[string]any)["add_tags"]); string(got) != `[{"name":"meraki-autovpn"},1]` {
+		t.Errorf("add_tags sent %s", got)
+	}
+
 	if !strings.Contains(logs.String(), "request_id=rid-1") || !strings.Contains(logs.String(), "reason=\"new vlan\"") || strings.Contains(logs.String(), "v10") {
 		t.Errorf("audit log: %s", logs.String())
 	}

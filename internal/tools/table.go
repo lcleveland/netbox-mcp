@@ -95,7 +95,7 @@ var Resources = []Resource{
 		Description: "Free-text journal notes attached to any object: why something changed, maintenance notes. Filters: assigned_object_type (e.g. dcim.device), assigned_object_id, kind, created_by, created_after, tag. " +
 			"Create needs assigned_object_type, assigned_object_id, comments (markdown) and optional kind (info|success|warning|danger)."},
 	{Name: "netbox_tag", Group: "extras", Path: "/api/extras/tags/", Title: "Tags",
-		Description: "Tags that can be applied to objects. Filters: name, slug, q, color, for_object_type_id. Objects reference tags by id or {\"name\": ...}; the tag must exist first."},
+		Description: "Tags that can be applied to objects. Filters: name, slug, q, color, for_object_type_id. Objects reference tags by id or name; the tag must exist first."},
 	{Name: "netbox_object_change", Group: "extras", Path: "/api/core/object-changes/", Title: "Changelog", ReadOnly: true,
 		Description: "The NetBox changelog: who changed what, when, and why (message). Filters: user, user_name, request_id, action (create|update|delete), changed_object_type (e.g. ipam.prefix), changed_object_id, time_after, time_before, q. " +
 			"Every write through this server returns a request_id to look up here."},

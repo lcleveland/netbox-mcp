@@ -206,6 +206,7 @@ func withReason(body any, reason string) (any, int, error) {
 	case map[string]any:
 		m := maps.Clone(t)
 		m["changelog_message"] = reason
+		nameTags(m)
 		return m, 1, nil
 	case []any:
 		out := make([]any, len(t))
@@ -214,6 +215,7 @@ func withReason(body any, reason string) (any, int, error) {
 			case map[string]any:
 				m := maps.Clone(o)
 				m["changelog_message"] = reason
+				nameTags(m)
 				out[i] = m
 			case float64:
 				out[i] = map[string]any{"id": o, "changelog_message": reason}
@@ -226,6 +228,26 @@ func withReason(body any, reason string) (any, int, error) {
 		return map[string]any{"changelog_message": reason}, 1, nil
 	}
 	return nil, 0, errors.New("body must be an object or an array of objects")
+}
+
+// nameTags turns bare tag names in tags/add_tags/remove_tags into
+// {"name": s}: NetBox accepts only an id or an attribute dict there, and
+// answers a bare string with a 500.
+func nameTags(m map[string]any) {
+	for _, k := range []string{"tags", "add_tags", "remove_tags"} {
+		list, ok := m[k].([]any)
+		if !ok {
+			continue
+		}
+		out := make([]any, len(list))
+		for i, x := range list {
+			if s, ok := x.(string); ok {
+				x = map[string]any{"name": s}
+			}
+			out[i] = x
+		}
+		m[k] = out
+	}
 }
 
 // ids collects object ids from the response, falling back to the request.

@@ -167,7 +167,7 @@ func actionHelp(actions []Action, maxBulk int, readOnly bool) string {
 	b.WriteString("list returns brief objects by default (pass fields for specific ones) with count and next_offset; get returns the full object plus _etag.")
 	if slices.ContainsFunc(actions, Action.write) {
 		fmt.Fprintf(&b, " Writes require reason (stored as the changelog message). body may be an array of up to %d objects for an all-or-nothing bulk write.", maxBulk)
-		b.WriteString(" Writing tags replaces the whole set; use add_tags/remove_tags to change it incrementally. custom_fields on update are merged into existing values; look up definitions with netbox_custom_field.")
+		b.WriteString(" Writing tags replaces the whole set; use add_tags/remove_tags to change it incrementally. Tags are given by id or name. custom_fields on update are merged into existing values; look up definitions with netbox_custom_field.")
 		if slices.Contains(actions, Update) {
 			b.WriteString(" Pass if_match (the _etag from get) to avoid overwriting a concurrent edit.")
 		}
