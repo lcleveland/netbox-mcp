@@ -50,6 +50,7 @@ func registerGeneric(s *mcp.Server, d Deps) error {
 
 	desc := "Call any NetBox REST endpoint under /api/ for objects without a dedicated tool " +
 		"(device types, platforms, circuits, clusters, plugins under /api/plugins/, ...). Prefer the netbox_* tools when one fits. " +
+		"Writes under /api/users/ and any call to /api/users/tokens/provision/ are refused. " +
 		"Allowed methods: " + strings.Join(methods, ", ") + ". List responses are capped; pass brief or fields and a limit."
 	if len(methods) > 1 {
 		desc += fmt.Sprintf(" Writes require reason (stored as the changelog message); bulk arrays are limited to %d objects.", d.Config.MaxBulk)
@@ -75,6 +76,10 @@ func registerGeneric(s *mcp.Server, d Deps) error {
 		path, err := apiPath(in.Path)
 		if err != nil {
 			return nil, nil, err
+		}
+		// NetBox account and credential admin stays out of the generic tool (#21).
+		if lp := strings.ToLower(path); strings.HasPrefix(lp, "/api/users/") && (method != http.MethodGet || strings.HasPrefix(lp, "/api/users/tokens/provision/")) {
+			return nil, nil, errors.New("netbox_api refuses writes under /api/users/ and any call to /api/users/tokens/provision/")
 		}
 		if method != http.MethodGet {
 			w := write{tool: "netbox_api", action: strings.ToLower(method), method: method, path: path, body: in.Body, reason: in.Reason}

@@ -56,6 +56,29 @@ func TestGeneric(t *testing.T) {
 	}
 }
 
+func TestGenericUsersBlocked(t *testing.T) {
+	var paths []string
+	cs := session(t, &config.Config{AllowCreate: true, AllowUpdate: true, AllowDelete: true}, func(w http.ResponseWriter, r *http.Request) {
+		paths = append(paths, r.Method+" "+r.URL.Path)
+		fmt.Fprint(w, `{"id":1}`)
+	})
+	for _, c := range [][2]string{
+		{"POST", "/api/users/users/"}, {"PATCH", "/api/users/groups/1/"}, {"DELETE", "/api/users/tokens/2/"},
+		{"post", "/api/users/permissions"}, {"PUT", "/api/USERS/Users/3"}, {"GET", "/api/users/tokens/provision/"},
+		{"POST", "/api/Users/Tokens/Provision"},
+	} {
+		if _, isErr, _ := call(t, cs, "netbox_api", map[string]any{"method": c[0], "path": c[1], "reason": "r", "body": map[string]any{}}); !isErr {
+			t.Errorf("%s %s allowed", c[0], c[1])
+		}
+	}
+	if len(paths) != 0 {
+		t.Errorf("reached NetBox: %v", paths)
+	}
+	if _, isErr, text := call(t, cs, "netbox_api", map[string]any{"method": "GET", "path": "/api/users/users/"}); isErr {
+		t.Errorf("users read refused: %s", text)
+	}
+}
+
 func TestAvailable(t *testing.T) {
 	var got []string
 	cs := session(t, &config.Config{AllowCreate: true}, func(w http.ResponseWriter, r *http.Request) {

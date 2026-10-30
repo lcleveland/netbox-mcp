@@ -44,6 +44,7 @@ There is no flag that takes the token directly.
 
 **Write safety.** These rules cover the resource tools, `netbox_available` and `netbox_api` alike:
 - A disabled verb is removed from the tool schemas and also rejected by the handler.
+- `netbox_api` refuses writes under `/api/users/` (users, groups, permissions, tokens) and every call to `/api/users/tokens/provision/`.
 - Every write requires `reason`, which is sent as `changelog_message`.
 - Bulk arrays are all-or-nothing and capped at `--max-bulk`.
 - Updates accept `if_match`, which is sent as `If-Match`.
