@@ -9,6 +9,13 @@ let
     u = User.objects.create_superuser("mcp", "mcp@example.com", "unused-password")
     Token.objects.create(user=u, key="mcptestkey01", token="0123456789abcdef0123456789abcdef01234567", version=TokenVersionChoices.V2)
   '';
+  # shortcut: nixpkgs d4f25a3 marks python-jose insecure (CVE-2026-120459), and
+  # netbox pulls it in via social-auth-core[openidconnect]; this VM never uses
+  # OIDC. Drop once nixos-unstable contains nixpkgs commit 68eee034f8.
+  netboxPkgs = import pkgs.path {
+    inherit (pkgs.stdenv.hostPlatform) system;
+    config.permittedInsecurePackages = [ "python3.14-python-jose-3.5.0" ];
+  };
 in
 pkgs.testers.runNixOSTest {
   name = "netbox-mcp-vm";
@@ -17,7 +24,7 @@ pkgs.testers.runNixOSTest {
     virtualisation.memorySize = 2048;
     services.netbox = {
       enable = true;
-      package = pkgs.netbox;
+      package = netboxPkgs.netbox;
       bind = "127.0.0.1:8001";
     };
     # A fixed test token; a real deployment uses sops-nix/agenix.
